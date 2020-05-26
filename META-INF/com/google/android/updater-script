@@ -1,0 +1,33 @@
+ui_print("Uninstalling System EdXposed ... ");
+
+ifelse(is_mounted("/system"), unmount("/system"));
+
+package_extract_file("utils/mount-system.sh", "/tmp/mount-system.sh");
+package_extract_file("utils/unmount-system.sh", "/tmp/unmount-system.sh");
+package_extract_file("utils/fun_rm_lmt.sh", "/tmp/fun_rm_lmt.sh");
+package_extract_file("utils/fun_rm_lmt_sar.sh", "/tmp/fun_rm_lmt_sar.sh");
+package_extract_file("utils/fun_rm_edxp.sh", "/tmp/fun_rm_edxp.sh");
+package_extract_file("utils/fun_rm_edxp_sar.sh", "/tmp/fun_rm_edxp_sar.sh");
+
+set_metadata("/tmp/mount-system.sh", "uid", 0, "gid", 0, "mode", 0755);
+set_metadata("/tmp/unmount-system.sh", "uid", 0, "gid", 0, "mode", 0755);
+set_metadata("/tmp/fun_rm_lmt.sh", "uid", 0, "gid", 0, "mode", 0755);
+set_metadata("/tmp/fun_rm_lmt_sar.sh", "uid", 0, "gid", 0, "mode", 0755);
+set_metadata("/tmp/fun_rm_edxp.sh", "uid", 0, "gid", 0, "mode", 0755);
+set_metadata("/tmp/fun_rm_edxp_sar.sh", "uid", 0, "gid", 0, "mode", 0755);
+
+run_program("/tmp/mount-system.sh") == 0 || abort("Could not mount /system");
+
+if getprop("ro.build.system_root_image") != "true" then
+  run_program("/tmp/fun_rm_lmt.sh");
+  run_program("/tmp/fun_rm_edxp.sh");
+else
+  run_program("/tmp/fun_rm_lmt_sar.sh");
+  run_program("/tmp/fun_rm_edxp_sar.sh");
+endif;
+
+run_program("/tmp/unmount-system.sh") == 0 || ui_print("Could not unmount /system");
+
+ui_print(" ");
+ui_print("Uninstall completed! Your system is completely wiped from EdXposed!");
+ui_print(" ");
